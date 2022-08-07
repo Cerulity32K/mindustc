@@ -60,6 +60,7 @@ enum Token {
 fn main() {
     let mut tokens: Vec<Token> = vec![];
     let mut arg: Args = args();
+    arg.next();
 
     let fname: String = arg.next().expect("Enter a file name to parse!");
     let mut code: File = File::open(&fname).expect("File doesn't exist!");
@@ -70,6 +71,6 @@ fn main() {
         None => String::from("out.msm")
     }).expect("Could not create file!");
 
-    code.write("mindustc :)".as_bytes()).expect("Unable to write to output!");
+    out.write("mindustc :)".as_bytes()).expect("Unable to write to output!");
     drop(code);
 }
