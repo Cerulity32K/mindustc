@@ -1,76 +1,43 @@
-use std::{env::{args, Args}, fs::{File, self}, vec, io::Write};
+//! Main file for MindustC. This will take in a MindustC script as an argument and output Mindustry Logic Processor assemblish.
+//! Modules:
+//!     types: Contains types like Token and BinOp.
+//!     tokenize: Contains the code that turns a script into a list of tokens.
+//!     is: Contains functions for checking script segments such as `is_keyword` and `is_iden_char`. Some return an Option, while some return a bool.
+//!     next: Contains functions for stepping through the script such as `next_char` and `next_number`.
+//! 
 
-enum BinOp {
-    Add,
-    Sub,
-    Div,
-    IDiv,
-    Mod,
-    Pow,
-    Eq,
-    And,
-    Less,
-    LessE,
-    Greater,
-    GreaterE,
-    Strequal,
-    Lsh,
-    Rsh,
-    Bor,
-    Band,
-    Bxor,
-    Max,
-    Min,
-    Angle,
-    Len,
-    Noise
-}
+use std::{env::{args, Args}, fs::File, io::{Write, Read}};
 
-enum UnOp {
-    Not,
-    Flip,
-    Abs,
-    Log,
-    Log10,
-    Floor,
-    Ceil,
-    Sqrt,
-    Rand,
-    Sin,
-    Cos,
-    Tan,
-    Asin,
-    Acos,
-    Atan
-}
+use tokenize::tokenize;
+use types::Token;
 
-enum Token {
-    Num(u64),
-    BinaryOp(BinOp),
-    UnaryOp(UnOp),
-    Bracket,
-    LParen,
-    RParen,
-    Comma,
-    Variable(String),
-    Semicolon,
-    Label(String)
-}
+mod tokenize;
+mod next;
+mod is;
+mod types;
 
 fn main() {
-    let mut tokens: Vec<Token> = vec![];
     let mut arg: Args = args();
     arg.next();
-
+    
     let fname: String = arg.next().expect("Enter a file name to parse!");
-    let mut code: File = File::open(&fname).expect("File doesn't exist!");
-    let len: u64 = fs::metadata(&fname).expect("You don't have access to the file!").len();
-
+    let mut code: String = String::new();
+    File::open(&fname).expect("File doesn't exist!").read_to_string(&mut code).unwrap();
+    
     let mut out: File = File::create(match arg.next() {
         Some(s) => s,
         None => String::from("out.msm")
     }).expect("Could not create file!");
+    
+    let code_chars: Vec<char> = code.chars().collect();
 
-    out.write("mindustc :)".as_bytes()).expect("Unable to write to output!");
+    let tokens: Vec<Token> = tokenize(&code_chars);
+    
+    let mut output_str: String = String::new();
+    for i in tokens {
+        output_str.push_str(&format!("{i:?} "));
+    }
+    
+    out.write(output_str.as_bytes()).expect("Unable to write to output!");
     drop(code);
 }
