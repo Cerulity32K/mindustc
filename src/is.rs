@@ -1,4 +1,4 @@
-use crate::types::{Token, BinOp, UnOp};
+use crate::lex::{BinOp, Token, UnOp};
 
 pub fn is_identifier_char(ch: char) -> bool {
     matches!(ch, 'a'..='z' | 'A'..='Z' | '_')
@@ -28,6 +28,6 @@ pub fn is_keyword(kw: &str) -> Option<Token> {
         "asin" => Some(Token::UnaryOp(UnOp::Asin)),
         "acos" => Some(Token::UnaryOp(UnOp::Acos)),
         "atan" => Some(Token::UnaryOp(UnOp::Atan)),
-        _ => None
+        _ => None,
     }
 }
