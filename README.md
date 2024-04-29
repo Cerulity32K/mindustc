@@ -24,3 +24,5 @@ op mul cool thing 2
 op sub cool cool 20
 asdfghjkl
 ```
+# Status
+As of now, this project has been ***discontinued***. However, expect a new transpiler soon. I'm rewriting and redesigning this project to create Scriptdustry.
